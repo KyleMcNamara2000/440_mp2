@@ -26,8 +26,43 @@ def computeCoordinate(start, length, angle):
         Return:
             End position (int,int):of the arm link, (x-coordinate, y-coordinate)
     """
+    #delta x = L * cos(angle)
+    #delta y = L * sin(angle)
+    #final pos = start + deltas
+    #zprint(angle, np.cos(angle * math.pi / 180))
+    d_x = math.floor(length * np.cos(angle * math.pi / 180))
+    d_y = -math.floor(length * np.sin(angle * math.pi / 180))
+    newPoint = (start[0] + d_x, start[1] + d_y)
+    return newPoint
 
-    return (0, 0)
+#line: (m, b), point: (x, y), return con point (x, y)
+def findConnectPoint(line, point):
+    if line is None:
+        return None
+    if line[0] == 0:
+        return (point[0], line[1])
+    perpSlope = -1.0 / line[0]
+    line2 = getMandBSlope(point, perpSlope)
+    m = line[0]
+    b1 = line[1]
+    b2 = line2[1]
+    #intersection of 2 perp lines = (m(b2-b1)/(m^2+1), (m^2*b2 + b1) / (m^2 + 1))
+    return (m * (b2 - b1) / (m**2 + 1), (m**2 * b2 + b1) / (m**2 + 1))
+
+
+#return (m, b) from points
+def getMandBPoints(point1, point2):
+    if point2[0] - point1[0] == 0:
+        return None
+    return getMandBSlope(point1, ((float)(point2[1] - point1[1])) / (point2[0] - point1[0]))
+
+# return (m, b) from point and slope
+def getMandBSlope(point, slope):
+    #b = y1 - x1(m)
+    return (slope, point[1] - point[0] * slope)
+
+def euclidDist(p1, p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
 def doesArmTouchObjects(armPosDist, objects, isGoal=False):
     """Determine whether the given arm links touch any obstacle or goal
@@ -41,10 +76,35 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
         Return:
             True if touched. False if not.
     """
+    #for segment in segs:
+    for link in armPosDist:
+        #for object in objs:
+        for object in objects:
+            #calc point of intersection on line
+            mb = getMandBPoints(link[0], link[1])
+            conPoint = findConnectPoint(mb, (object[0], object[1]))
+            distance = 0
+            flag = False
+            if conPoint is None:
+                conPoint = (link[0][0], object[1])
+            if conPoint[0] < max(link[0][0], link[1][0]) and conPoint[0] > min(link[0][0], link[1][0]) and conPoint[1] < max(link[0][1], link[1][1]) and conPoint[1] > min(link[0][1], link[1][1]):
+                # if intersect in segment -> return that distance
+                distance = euclidDist(conPoint, object)
+                flag = True
+            else:
+                #else -> return min(distance to each endpoint)
+                distance = min(euclidDist(link[0], object), euclidDist(link[1], object))
+            buffer = 0
+            if isGoal:
+                buffer = 0
+            if distance <= object[2] + buffer:
+                #print("object:", object, "making contact with", link, "in seg?", flag)
+                return True
+
     return False
 
 def doesArmTipTouchGoals(armEnd, goals):
-    """Determine whether the given arm tick touch goals
+    """Determine whether the given arm tip touch goals
 
         Args:
             armEnd (tuple): the arm tick position, (x-coordinate, y-coordinate)
@@ -52,6 +112,9 @@ def doesArmTipTouchGoals(armEnd, goals):
         Return:
             True if arm tip touches any goal. False if not.
     """
+    for g in goals:
+        if np.linalg.norm((g[0] - armEnd[0], g[1] - armEnd[1])) < g[2]:
+            return True
     return False
 
 
@@ -65,6 +128,11 @@ def isArmWithinWindow(armPos, window):
         Return:
             True if all parts are in the window. False if not.
     """
+    #check if all 3 points are in window, if so we good
+    for joint in armPos:
+        for p in joint:
+            if p[0] < 0 or p[0] > window[0] or p[1] < 0 or p[1] > window[1]:
+                return False
     return True
 
 
