@@ -13,6 +13,7 @@ This file contains the transform function that converts the robot arm map
 to the maze.
 """
 import copy
+import math
 from arm import Arm
 from maze import Maze
 from search import *
@@ -34,4 +35,32 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             Maze: the maze instance generated based on input arguments.
 
     """
+    #create new maze with dims = (range of angle) / granulity
+    dims = arm.getArmLimit()
+    for i in range(len(dims)):
+        dims[i] = math.floor((dims[i][1] - dims[i][0]) / granularity) + 1
+    #print("dims:", dims)
+
+    maze = []
+    for i in range(dims[0]):
+        column = []
+        for j in range(dims[1]):
+            column.append(" ")
+        maze.append(column)
+    #print(maze)
+    '''
+    maze[0][0] = "." #start point
+    for i in range(dims[0]):
+        for j in range(dims[1]):
+            alpha = 100#idxToAngle(index, offsets, granularity)
+            beta = 100#idxToAngle(index, offsets, granularity)
+            arm.setArmAngle([alpha, beta])
+            armPos = arm.getArmPos()
+            if isArmWithinWindow(armPos, window) is False:
+                maze[i][j] = "%"
+            elif doesArmTouchObjects(armPos, obstacles, False) is True:
+                maze[i][j] = "%" #can't go here
+            elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
+                maze[i][j] = "P" #solution
+    '''
     pass

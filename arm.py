@@ -90,7 +90,7 @@ class Arm:
         """This function sets angles(alpha, beta, gamma) for all arm links
         """
         angles = angles[:self.getNumArmLinks()]
-
+        print(angles[0], angles[1])
         for i in range(len(angles)):
             if angles[i] < min(self.__armLimit[i]) or angles[i] > max(self.__armLimit[i]):
                 return False
