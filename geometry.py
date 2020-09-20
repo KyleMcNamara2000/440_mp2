@@ -30,9 +30,17 @@ def computeCoordinate(start, length, angle):
     #delta y = L * sin(angle)
     #final pos = start + deltas
     #zprint(angle, np.cos(angle * math.pi / 180))
-    d_x = math.floor(length * np.cos(angle * math.pi / 180))
-    d_y = -math.floor(length * np.sin(angle * math.pi / 180))
-    newPoint = (start[0] + d_x, start[1] + d_y)
+    d_x = length * np.cos(angle * math.pi / 180.0)
+    if d_x < 0:
+        d_x = math.ceil(d_x)
+    else:
+        d_x = math.floor(d_x)
+    d_y = length * np.sin(angle * math.pi / 180.0)
+    if d_y < 0:
+        d_y = math.ceil(d_y)
+    else:
+        d_y = math.floor(d_y)
+    newPoint = (start[0] + d_x, start[1] - d_y)
     return newPoint
 
 #line: (m, b), point: (x, y), return con point (x, y)
@@ -94,7 +102,7 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
             else:
                 #else -> return min(distance to each endpoint)
                 distance = min(euclidDist(link[0], object), euclidDist(link[1], object))
-            buffer = 0
+            buffer = link[2]
             if isGoal:
                 buffer = 0
             if distance <= object[2] + buffer:
@@ -140,6 +148,7 @@ if __name__ == '__main__':
     computeCoordinateParameters = [((150, 190),100,20), ((150, 190),100,40), ((150, 190),100,60), ((150, 190),100,160)]
     resultComputeCoordinate = [(243, 156), (226, 126), (200, 104), (57, 156)]
     testRestuls = [computeCoordinate(start, length, angle) for start, length, angle in computeCoordinateParameters]
+
     assert testRestuls == resultComputeCoordinate
 
     testArmPosDists = [((100,100), (135, 110), 4), ((135, 110), (150, 150), 5)]
@@ -162,14 +171,14 @@ if __name__ == '__main__':
             testResults.append(doesArmTouchObjects([testArmPosDist], testObstacle, isGoal=True))
             # print(testArmPosDist)
             # print(doesArmTouchObjects([testArmPosDist], testObstacle, isGoal=True))
-
+    #print(resultDoesArmTouchObjects, "\n", testResults)
     assert resultDoesArmTouchObjects == testResults
 
     testArmEnds = [(100, 100), (95, 95), (90, 90)]
     testGoal = [(100, 100, 10)]
     resultDoesArmTouchGoals = [True, True, False]
 
-    testResults = [doesArmTickTouchGoals(testArmEnd, testGoal) for testArmEnd in testArmEnds]
+    testResults = [doesArmTipTouchGoals(testArmEnd, testGoal) for testArmEnd in testArmEnds]
     assert resultDoesArmTouchGoals == testResults
 
     testArmPoss = [((100,100), (135, 110)), ((135, 110), (150, 150))]
