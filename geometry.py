@@ -24,6 +24,38 @@ def computeCoordinate(start, length, angle):
     newPoint = (start[0] + d_x, start[1] - d_y)
     return newPoint
 
+
+#copied from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+def dist(x1, y1, x2, y2, x3, y3): # x3,y3 is the point
+    px = x2-x1
+    py = y2-y1
+
+    norm = px*px + py*py
+
+    u =  float((x3 - x1) * px + (y3 - y1) * py) / float(norm)
+
+    if u > 1:
+        u = 1
+    elif u < 0:
+        u = 0
+
+    x = x1 + u * px
+    y = y1 + u * py
+
+    dx = x - x3
+    dy = y - y3
+
+    # Note: If the actual distance does not matter,
+    # if you only want to compare what this function
+    # returns to other results of this function, you
+    # can just return the squared distance instead
+    # (i.e. remove the sqrt) to gain a little performance
+
+    dist = (dx*dx + dy*dy)**.5
+
+    return dist
+
+'''
 #line: (m, b), point: (x, y), return con point (x, y)
 def findConnectPoint(line, point):
     if line is None:
@@ -54,11 +86,13 @@ def getMandBSlope(point, slope):
 def euclidDist(p1, p2):
     return math.sqrt(float((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2))
 
+'''
 def doesArmTouchObjects(armPosDist, objects, isGoal=False):
     #for segment in segs:
     for link in armPosDist:
         #for object in objs:
         for object in objects:
+            '''
             #calc point of intersection on line
             mb = getMandBPoints(link[0], link[1])
             conPoint = findConnectPoint(mb, (object[0], object[1]))
@@ -73,6 +107,8 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
             else:
                 #else -> return min(distance to each endpoint)
                 distance = min(euclidDist(link[0], object), euclidDist(link[1], object))
+            '''
+            distance = dist(link[0][0], link[0][1], link[1][0], link[1][1], object[0], object[1])
             buffer = link[2]
             if isGoal:
                 buffer = 0
@@ -81,6 +117,9 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
                 return True
 
     return False
+
+
+
 
 def doesArmTipTouchGoals(armEnd, goals):
     """Determine whether the given arm tip touch goals

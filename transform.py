@@ -71,5 +71,5 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
                 maze[i][j] = "%"
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
-    #retMaze.saveToFile("check.txt")
+    retMaze.saveToFile("check.txt")
     return retMaze
