@@ -15,31 +15,12 @@ import math
 import numpy as np
 from const import *
 
+
+
 def computeCoordinate(start, length, angle):
-    """Compute the end cooridinate based on the given start position, length and angle.
 
-        Args:
-            start (tuple): base of the arm link. (x-coordinate, y-coordinate)
-            length (int): length of the arm link
-            angle (int): degree of the arm link from x-axis to couter-clockwise
-
-        Return:
-            End position (int,int):of the arm link, (x-coordinate, y-coordinate)
-    """
-    #delta x = L * cos(angle)
-    #delta y = L * sin(angle)
-    #final pos = start + deltas
-    #zprint(angle, np.cos(angle * math.pi / 180))
-    d_x = length * np.cos(angle * math.pi / 180.0)
-    if d_x < 0:
-        d_x = math.ceil(d_x)
-    else:
-        d_x = math.floor(d_x)
-    d_y = length * np.sin(angle * math.pi / 180.0)
-    if d_y < 0:
-        d_y = math.ceil(d_y)
-    else:
-        d_y = math.floor(d_y)
+    d_x = int(length * np.cos(np.radians(angle)))
+    d_y = int(length * np.sin(np.radians(angle)))
     newPoint = (start[0] + d_x, start[1] - d_y)
     return newPoint
 
@@ -55,35 +36,25 @@ def findConnectPoint(line, point):
     b1 = line[1]
     b2 = line2[1]
     #intersection of 2 perp lines = (m(b2-b1)/(m^2+1), (m^2*b2 + b1) / (m^2 + 1))
-    return (m * (b2 - b1) / (m**2 + 1), (m**2 * b2 + b1) / (m**2 + 1))
+    return (m * (b2 - b1) / (m**2 + 1.0), (m**2 * b2 + b1) / (m**2 + 1.0))
 
 
-#return (m, b) from points
+#return (m, b) from points good
 def getMandBPoints(point1, point2):
     if point2[0] - point1[0] == 0:
         return None
-    return getMandBSlope(point1, ((float)(point2[1] - point1[1])) / (point2[0] - point1[0]))
+    return getMandBSlope(point1, ((float)(point2[1] - point1[1])) / ((float)(point2[0] - point1[0])))
 
-# return (m, b) from point and slope
+# return (m, b) from point and slope good
 def getMandBSlope(point, slope):
     #b = y1 - x1(m)
     return (slope, point[1] - point[0] * slope)
 
+#good
 def euclidDist(p1, p2):
-    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+    return math.sqrt(float((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2))
 
 def doesArmTouchObjects(armPosDist, objects, isGoal=False):
-    """Determine whether the given arm links touch any obstacle or goal
-
-        Args:
-            armPosDist (list): start and end position and padding distance of all arm links [(start, end, distance)]
-            objects (list): x-, y- coordinate and radius of object (obstacles or goals) [(x, y, r)]
-            isGoal (bool): True if the object is a goal and False if the object is an obstacle.
-                           When the object is an obstacle, consider padding distance.
-                           When the object is a goal, no need to consider padding distance.
-        Return:
-            True if touched. False if not.
-    """
     #for segment in segs:
     for link in armPosDist:
         #for object in objs:
@@ -95,7 +66,7 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
             flag = False
             if conPoint is None:
                 conPoint = (link[0][0], object[1])
-            if conPoint[0] < max(link[0][0], link[1][0]) and conPoint[0] > min(link[0][0], link[1][0]) and conPoint[1] < max(link[0][1], link[1][1]) and conPoint[1] > min(link[0][1], link[1][1]):
+            if conPoint[0] <= max(link[0][0], link[1][0]) and conPoint[0] >= min(link[0][0], link[1][0]) and conPoint[1] <= max(link[0][1], link[1][1]) and conPoint[1] >= min(link[0][1], link[1][1]):
                 # if intersect in segment -> return that distance
                 distance = euclidDist(conPoint, object)
                 flag = True
@@ -121,7 +92,7 @@ def doesArmTipTouchGoals(armEnd, goals):
             True if arm tip touches any goal. False if not.
     """
     for g in goals:
-        if np.linalg.norm((g[0] - armEnd[0], g[1] - armEnd[1])) < g[2]:
+        if np.linalg.norm((g[0] - armEnd[0], g[1] - armEnd[1])) <= g[2]:
             return True
     return False
 
