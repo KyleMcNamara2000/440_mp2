@@ -50,6 +50,9 @@ def bfs(maze):
                 visited[n] = True
                 q.append(n)
                 pairs[n] = curr
+                if maze.isObjective(n[0], n[1]):
+                    wonSpot = n
+                    break
 
     # print("done", wonSpot)
     # now reconstruct path
