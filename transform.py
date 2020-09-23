@@ -36,7 +36,7 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
 
     """
     #create new maze with dims = (range of angle) / granulity
-    dims = arm.getArmLimit()
+    dims = arm.getArmLimit().copy()
     for i in range(len(dims)):
         dims[i] = math.floor((dims[i][1] - dims[i][0]) / granularity) + 1
     #print("dims:", dims)
@@ -48,19 +48,27 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             column.append(" ")
         maze.append(column)
     #print(maze)
-    '''
-    maze[0][0] = "." #start point
+
+    startAngles = []
+    for i in range(len(arm.getArmAngle())):
+        startAngles.append(math.floor((arm.getArmAngle()[i] - arm.getArmLimit()[i][0]) / granularity))
+
+    maze[startAngles[0]][startAngles[1]] = "P" #start point
+
     for i in range(dims[0]):
         for j in range(dims[1]):
-            alpha = 100#idxToAngle(index, offsets, granularity)
-            beta = 100#idxToAngle(index, offsets, granularity)
-            arm.setArmAngle([alpha, beta])
+            alpha = i * granularity + arm.getArmLimit()[0][0]
+            beta = j * granularity + arm.getArmLimit()[1][0]
+            arm.setArmAngle((alpha, beta))
             armPos = arm.getArmPos()
+
             if isArmWithinWindow(armPos, window) is False:
                 maze[i][j] = "%"
-            elif doesArmTouchObjects(armPos, obstacles, False) is True:
-                maze[i][j] = "%" #can't go here
+            elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
+                maze[i][j] = "%"
             elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
-                maze[i][j] = "P" #solution
-    '''
-    pass
+                maze[i][j] = "."
+
+    retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
+    retMaze.saveToFile("check.txt")
+    return retMaze

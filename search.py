@@ -32,4 +32,33 @@ def bfs(maze):
     This function returns optimal path in a list, which contains start and objective.
     If no path found, return None. 
     """
-    return []
+    q = []
+    visited = {}
+    q.append(maze.getStart())
+    pairs = {}  # maps from 2nd step -> first step
+
+    wonSpot = None
+    while len(q) > 0:
+        curr = q.pop(0)
+        if maze.isObjective(curr[0], curr[1]):
+            wonSpot = curr
+            break
+        neighbors = maze.getNeighbors(curr[0], curr[1])
+        for n in neighbors:
+            if n not in visited:
+                # print("appending", n)
+                visited[n] = True
+                q.append(n)
+                pairs[n] = curr
+
+    # print("done", wonSpot)
+    # now reconstruct path
+    curr = wonSpot
+    path = []
+    while curr != maze.getStart():
+        path.append(curr)
+        curr = pairs[curr]
+    path.append(curr)
+    path.reverse()
+
+    return path
