@@ -68,17 +68,24 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
                 maze[i][j] = "%"
             else:
+                flag = False
                 for g in goals:
                     newG = goals.copy()
                     newG.remove(g)
                     if doesArmTipTouchGoals(arm.getEnd(), [g]) is True:
                         if doesArmTouchObjects(arm.getArmPosDist(), newG, True) is False:
                             maze[i][j] = "."
+                            flag = True
                             break
                         else:
                             maze[i][j] = "%"
+                            flag = True
                             break
+                if flag is False:
+                    if doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
+                        maze[i][j] = "%"
+
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
-    #retMaze.saveToFile("checkooo.txt")
+    retMaze.saveToFile("checkcheck.txt")
     return retMaze
