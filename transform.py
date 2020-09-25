@@ -67,6 +67,16 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
                 maze[i][j] = "%"
             elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
                 maze[i][j] = "%"
+            elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
+                maze[i][j] = "."
+            elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, True) is True:
+                maze[i][j] = "%"
+
+            '''
+            if isArmWithinWindow(armPos, window) is False:
+                maze[i][j] = "%"
+            elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
+                maze[i][j] = "%"
             else:
                 flag = False
                 for g in goals:
@@ -84,6 +94,7 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
                 if flag is False:
                     if doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                         maze[i][j] = "%"
+            '''
 
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
