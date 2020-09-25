@@ -39,7 +39,7 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
     #create new maze with dims = (range of angle) / granulity
     dims = arm.getArmLimit().copy()
     for i in range(len(dims)):
-        dims[i] = math.floor((dims[i][1] - dims[i][0]) / granularity) + 1
+        dims[i] = int((dims[i][1] - dims[i][0]) / granularity) + 1
     #print("dims:", dims)
 
     maze = []
@@ -52,7 +52,7 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
 
     startAngles = []
     for i in range(len(arm.getArmAngle())):
-        startAngles.append(math.floor((arm.getArmAngle()[i] - arm.getArmLimit()[i][0]) / granularity))
+        startAngles.append(int((arm.getArmAngle()[i] - arm.getArmLimit()[i][0]) / granularity))
 
     maze[startAngles[0]][startAngles[1]] = "P" #start point
 
@@ -87,5 +87,5 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
 
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
-    retMaze.saveToFile("checkcheck.txt")
+    retMaze.saveToFile("check2.txt")
     return retMaze
