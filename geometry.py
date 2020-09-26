@@ -24,7 +24,7 @@ def computeCoordinate(start, length, angle):
     newPoint = (start[0] + d_x, start[1] - d_y)
     return newPoint
 
-'''
+
 #copied from https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 def dist(x1, y1, x2, y2, x3, y3): # x3,y3 is the point
     px = x2-x1
@@ -51,10 +51,10 @@ def dist(x1, y1, x2, y2, x3, y3): # x3,y3 is the point
     # can just return the squared distance instead
     # (i.e. remove the sqrt) to gain a little performance
 
-    dist = (dx*dx + dy*dy)**.5
+    dist = (float(dx*dx + dy*dy))**.5
 
     return dist
-'''
+
 
 #line: (m, b), point: (x, y), return con point (x, y)
 def findConnectPoint(line, point):
@@ -92,7 +92,7 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
     for link in armPosDist:
         #for object in objs:
         for object in objects:
-
+            '''
             #calc point of intersection on line
             mb = getMandBPoints(link[0], link[1])
             conPoint = findConnectPoint(mb, (object[0], object[1]))
@@ -107,14 +107,14 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
             else:
                 #else -> return min(distance to each endpoint)
                 distance = min(euclidDist(link[0], object), euclidDist(link[1], object))
+            '''
 
-            '''
             distance = dist(link[0][0], link[0][1], link[1][0], link[1][1], object[0], object[1])
-            '''
+
             buffer = link[2]
             if isGoal:
                 buffer = 0
-            if distance <= object[2] + buffer:
+            if distance < object[2] + buffer:
                 #print("object:", object, "making contact with", link, "in seg?", flag)
                 return True
 
