@@ -40,16 +40,12 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
     dims = arm.getArmLimit().copy()
     for i in range(len(dims)):
         dims[i] = int((dims[i][1] - dims[i][0]) / granularity) + 1
-    #print("dims:", dims)
-
     maze = []
     for i in range(dims[0]):
         column = []
         for j in range(dims[1]):
             column.append(" ")
         maze.append(column)
-    #print(maze)
-
     startAngles = []
     for i in range(len(arm.getArmAngle())):
         startAngles.append(int((arm.getArmAngle()[i] - arm.getArmLimit()[i][0]) / granularity))
@@ -58,8 +54,8 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
 
     for i in range(dims[0]):
         for j in range(dims[1]):
-            alpha = i * granularity + arm.getArmLimit()[0][0] #idxToAngle(index, offsets, granularity)
-            beta = j * granularity + arm.getArmLimit()[1][0]
+            alpha = int(i * granularity + arm.getArmLimit()[0][0]) #idxToAngle(index, offsets, granularity)
+            beta = int(j * granularity + arm.getArmLimit()[1][0])
             arm.setArmAngle((alpha, beta))
             armPos = arm.getArmPos()
 
@@ -71,30 +67,6 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
                 maze[i][j] = "."
             elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                 maze[i][j] = "%"
-
-            '''
-            if isArmWithinWindow(armPos, window) is False:
-                maze[i][j] = "%"
-            elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
-                maze[i][j] = "%"
-            else:
-                flag = False
-                for g in goals:
-                    newG = goals.copy()
-                    newG.remove(g)
-                    if doesArmTipTouchGoals(arm.getEnd(), [g]) is True:
-                        if doesArmTouchObjects(arm.getArmPosDist(), newG, True) is False:
-                            maze[i][j] = "."
-                            flag = True
-                            break
-                        else:
-                            maze[i][j] = "%"
-                            flag = True
-                            break
-                if flag is False:
-                    if doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
-                        maze[i][j] = "%"
-            '''
 
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
