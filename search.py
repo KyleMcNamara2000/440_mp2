@@ -40,8 +40,6 @@ def bfs(maze):
     wonSpot = None
     while len(q) > 0:
         curr = q.pop(0)
-        if curr[1] == 6 or curr[1] == 7:
-            print("searching", curr)
         if maze.isObjective(curr[0], curr[1]):
             wonSpot = curr
             break

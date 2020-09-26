@@ -71,6 +71,10 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                 maze[i][j] = "%"
                 ty = 3
+            elif maze[i][j] == "P":
+                print("I FOUND THE P!")
+            else:
+                maze[i][j] = " "
 
 
             if ty == 1 or ty == 0:
