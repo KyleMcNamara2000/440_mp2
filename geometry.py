@@ -114,7 +114,7 @@ def doesArmTouchObjects(armPosDist, objects, isGoal=False):
             buffer = link[2]
             if isGoal:
                 buffer = 0
-            if distance < object[2] + buffer:
+            if distance <= object[2] + buffer:
                 #print("object:", object, "making contact with", link, "in seg?", flag)
                 return True
 
