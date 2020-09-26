@@ -63,11 +63,11 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             if isArmWithinWindow(armPos, window) is False:
                 maze[i][j] = "%"
                 ty = 1
+            elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
+                maze[i][j] = "."
             elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
                 maze[i][j] = "%"
                 ty = 2
-            elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
-                maze[i][j] = "."
             elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                 maze[i][j] = "%"
                 ty = 3
