@@ -59,17 +59,25 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             beta = int(j * granularity + arm.getArmLimit()[1][0])
             arm.setArmAngle((alpha, beta))
             armPos = arm.getArmPos()
-
+            ty = 0
             if isArmWithinWindow(armPos, window) is False:
                 maze[i][j] = "%"
+                ty = 1
             elif doesArmTouchObjects(arm.getArmPosDist(), obstacles, False) is True:
                 maze[i][j] = "%"
+                ty = 2
             elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
                 maze[i][j] = "."
             elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                 maze[i][j] = "%"
-            longways += maze[i][j]
-        print(longways, "\n")
+                ty = 3
+            if ty == 1:
+                longways += maze[i][j]
+            elif ty == 2:
+                longways += "#"
+            elif ty == 3:
+                longways += "$"
+        print(longways)
 
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
