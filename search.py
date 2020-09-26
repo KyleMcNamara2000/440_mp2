@@ -51,14 +51,18 @@ def bfs(maze):
                 q.append(n)
                 pairs[n] = curr
 
-    # print("done", wonSpot)
+    #print("done", wonSpot)
     # now reconstruct path
-    curr = wonSpot
-    path = []
-    while curr != maze.getStart():
+    if wonSpot != None:
+        curr = wonSpot
+        path = []
+        while curr != maze.getStart():
+            path.append(curr)
+            curr = pairs[curr]
         path.append(curr)
-        curr = pairs[curr]
-    path.append(curr)
-    path.reverse()
-
-    return path
+        path.reverse()
+        print("path:", path)
+        return path
+    else:
+        print("no path")
+        return []
