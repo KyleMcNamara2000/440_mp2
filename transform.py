@@ -71,7 +71,8 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
             elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
                 maze[i][j] = "%"
                 ty = 3
-            if ty == 1:
+
+            if ty == 1 or ty == 0:
                 longways += maze[i][j]
             elif ty == 2:
                 longways += "#"
