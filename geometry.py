@@ -152,6 +152,8 @@ def isArmWithinWindow(armPos, window):
     #check if all 3 points are in window, if so we good
     for joint in armPos:
         for p in joint:
+            if p in armPos[0][0]:
+                continue
             if p[0] < 0 or p[0] > window[0] or p[1] < 0 or p[1] > window[1]:
                 return False
     return True

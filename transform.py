@@ -53,8 +53,9 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
     maze[startAngles[0]][startAngles[1]] = "P" #start point
 
     for i in range(dims[0]):
+        longways = ""
         for j in range(dims[1]):
-            alpha = int(i * granularity + arm.getArmLimit()[0][0]) #idxToAngle(index, offsets, granularity)
+            alpha = int(i * granularity + arm.getArmLimit()[0][0])
             beta = int(j * granularity + arm.getArmLimit()[1][0])
             arm.setArmAngle((alpha, beta))
             armPos = arm.getArmPos()
@@ -65,10 +66,12 @@ def transformToMaze(arm, goals, obstacles, window, granularity):
                 maze[i][j] = "%"
             elif doesArmTipTouchGoals(arm.getEnd(), goals) is True:
                 maze[i][j] = "."
-            #elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
-            #    maze[i][j] = "%"
+            elif doesArmTouchObjects(arm.getArmPosDist(), goals, True) is True:
+                maze[i][j] = "%"
+            longways += maze[i][j] + ", "
+        print(longways, "\n")
 
 
     retMaze = Maze(maze, (arm.getArmLimit()[0][0], arm.getArmLimit()[1][0]), granularity)
-    retMaze.saveToFile("check2.txt")
+    #retMaze.saveToFile("check2.txt")
     return retMaze
